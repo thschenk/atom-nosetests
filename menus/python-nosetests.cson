@@ -1,11 +1,4 @@
 # See https://atom.io/docs/latest/hacking-atom-package-word-count#menus for more details
-'context-menu':
-  'atom-text-editor': [
-    {
-      'label': 'Toggle Python Nosetests'
-      'command': 'python-nosetests:toggle'
-    }
-  ]
 'menu': [
   {
     'label': 'Packages'
@@ -13,8 +6,12 @@
       'label': 'Python Nosetests'
       'submenu': [
         {
-          'label': 'Toggle'
-          'command': 'python-nosetests:toggle'
+          'label': 'Run'
+          'command': 'python-nosetests:run'
+        },
+        {
+          'label': 'Hide'
+          'command': 'python-nosetests:hide'
         }
       ]
     ]

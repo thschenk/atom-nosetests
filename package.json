@@ -2,11 +2,11 @@
   "name": "python-nosetests",
   "main": "./lib/python-nosetests",
   "version": "0.0.0",
-  "description": "A short description of your package",
+  "description": "Run python nosetests from within the atom editor",
   "keywords": [
   ],
   "activationCommands": {
-    "atom-workspace": "python-nosetests:toggle"
+    "atom-workspace": "python-nosetests:run"
   },
   "repository": "https://github.com/atom/python-nosetests",
   "license": "MIT",

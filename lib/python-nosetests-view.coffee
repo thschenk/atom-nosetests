@@ -1,4 +1,3 @@
-fs = require 'fs'
 
 module.exports =
 class PythonNosetestsView
@@ -27,14 +26,15 @@ class PythonNosetestsView
   getElement: ->
     @element
 
+  setBusy: ->
+    @element.classList.add('busy')
+
   clear: ->
     @root_ul.innerHTML = ""
 
-  load: (filename) ->
+  load: (data) ->
     @clear()
 
-    filecontent = fs.readFileSync(filename, 'UTF8');
-    data = JSON.parse(filecontent)
 
     for mod in data.modules
       mod_ul = @addModule(mod)
@@ -42,6 +42,7 @@ class PythonNosetestsView
       for tc in mod.testcases
         @addTestCase(mod_ul, tc)
 
+    @element.classList.remove('busy')
 
   addModule: (mod) ->
     li = document.createElement('li')
