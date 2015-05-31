@@ -4,7 +4,7 @@ child_process = require 'child_process'
 fs = require 'fs'
 
 module.exports = PythonNosetests =
-  view: null
+  listview: null
   panel: null
   subscriptions: null
 
@@ -20,19 +20,19 @@ module.exports = PythonNosetests =
   deactivate: () ->
     @panel.destroy()
     @subscriptions.dispose()
-    @view.destroy()
+    @listview.destroy()
 
   setErrorPane: (error) ->
     alert(error.message)
 
   run: () ->
 
-    if not @view
-      @view = new PythonNosetestsView(@setErrorPane)
-      @panel = atom.workspace.addRightPanel(item: @view.getElement())
+    if not @listview
+      @listview = new PythonNosetestsView(@setErrorPane)
+      @panel = atom.workspace.addRightPanel(item: @listview.getElement())
       @panel.show()
 
-    @view.setBusy()
+    @listview.setBusy()
 
     start_time = new Date().getTime()/1000;
 
@@ -56,25 +56,26 @@ module.exports = PythonNosetests =
         cwd = root.getPath()
 
     if not command
-      alert("Could not determine how to run nosetests.")
-      return
+      return @warn "Could not determine how to run nosetests."
 
 
     child_process.exec command, cwd: cwd, =>
 
       if not nosetestsfile.existsSync()
-        alert("Could not find '"+nosetestsfile.getPath()+"' after running the tests")
-        return
+        return @warn("Could not find '"+nosetestsfile.getPath()+"' after running the tests")
 
       filecontent = fs.readFileSync(nosetestsfile.getPath(), 'UTF8');
       data = JSON.parse(filecontent)
 
       if data.metadata.time < start_time
-        alert('Error: timestamp of nosetests.json file is before starting time.')
-        return
+        return @warn('Error: timestamp of nosetests.json file is before starting time.')
 
-      @view.load(data)
+      @listview.load(data)
+      @panel.show()
 
+
+  warn: (message) ->
+    atom.notifications.addWarning message, dismissable: true
 
   hide: () ->
     @panel.hide()
