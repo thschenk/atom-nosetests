@@ -5,9 +5,15 @@
 @import "ui-variables";
 
 .python-nosetests {
-  padding: 1em 2em 1em 1em;
-  overflow: auto;
-  height:100%;
+  background-color: @tool-panel-background-color;
+  height: 100%;
+
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  flex-flow: flex-start;
+  align-items: stretch;
+  align-content: stretch;
 }
 
 
@@ -20,6 +26,63 @@
   padding-left: 1em;
 }
 
-.python-nosetests.busy > ul {
+.python-nosetests.busy {
   opacity: .6;
+}
+
+.python-nosetests .listview {
+  //border: 1px solid orange;
+  flex: 1 1;
+  overflow: auto;
+}
+
+
+.python-nosetests .errorview {
+  //border: 1px solid red;
+  flex: 1 1;
+  list-style-type:none;
+  padding: 0;
+  margin: 0;
+  overflow: auto;
+
+
+  li {
+    border-top: 1px solid @text-color-subtle;
+    padding: 0.5em;
+  }
+
+  li.selected {
+    background-color:@inset-panel-background-color;
+  }
+
+  .filename {
+    color: @text-color-subtle;
+  }
+
+  .function {
+    color: @text-color-subtle;
+
+    span {
+      font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
+      color: @text-color;
+    }
+  }
+
+  .code {
+    font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
+    margin-left: 1em;
+    color: @text-color;
+    background: inherit;
+    white-space: pre;
+  }
+
+  .message {
+    white-space: pre;
+  }
+
+}
+
+
+.python-nosetests .errorview.hide {
+  display:none;
 }

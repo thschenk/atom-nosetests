@@ -1,7 +1,7 @@
-PythonNosetestsView = require './python-nosetests-view'
+PythonNosetestsListView = require './python-nosetests-listview'
+PythonNosetestsErrorView = require './python-nosetests-errorview'
 {CompositeDisposable} = require 'atom'
-child_process = require 'child_process'
-fs = require 'fs'
+Runner = require './python-nosetests-runner'
 
 module.exports = PythonNosetests =
   listview: null
@@ -17,75 +17,51 @@ module.exports = PythonNosetests =
     @subscriptions.add atom.commands.add 'atom-workspace', 'python-nosetests:run': => @run()
     @subscriptions.add atom.commands.add 'atom-workspace', 'python-nosetests:hide': => @hide()
 
+
+    @listview = new PythonNosetestsListView(@setErrorPane)
+    @errorview = new PythonNosetestsErrorView()
+
+
+    @mainelement = document.createElement('div')
+    @mainelement.classList.add('python-nosetests')
+    @mainelement.appendChild(@listview.getElement())
+    @mainelement.appendChild(@errorview.getElement())
+    @errorview.hide()
+
+    @panel = atom.workspace.addRightPanel(item: @mainelement, visible: false)
+
   deactivate: () ->
     @panel.destroy()
     @subscriptions.dispose()
     @listview.destroy()
 
-  setErrorPane: (error) ->
-    alert(error.message)
+  setErrorPane: (error) =>
+    PythonNosetests.errorview.load(error)
+
+  setBusy: (value)->
+    if value
+      @mainelement.classList.add('busy')
+    else
+      @mainelement.classList.remove('busy')
 
   run: () ->
 
-    if not @listview
-      @listview = new PythonNosetestsView(@setErrorPane)
-      @panel = atom.workspace.addRightPanel(item: @listview.getElement())
-      @panel.show()
+    @setBusy(true)
 
-    @listview.setBusy()
+    Runner.run {
+               success: (data) =>
+                 @listview.load(data)
+                 @panel.show()
+                 @setBusy(false)
+                 @errorview.hide()
 
-    start_time = new Date().getTime()/1000;
+               error: (message) =>
+                 atom.notifications.addWarning message, dismissable: true
+                 @hide()
+                 @setBusy(false)
+                 @errorview.hide()
+               }
 
-    root = @getProjectRoot()
-    nosetestsfile = root.getFile('nosetests.json')
-
-    command = null
-    cwd = null
-
-    if not command
-      if nosetestsfile.existsSync()
-        filecontent = fs.readFileSync(nosetestsfile.getPath(), 'UTF8');
-        data = JSON.parse(filecontent)
-        command = data.metadata.command
-        cwd = data.metadata.cwd
-
-    if not command
-      script = root.getFile('test')
-      if script.existsSync()
-        command = script.getPath()
-        cwd = root.getPath()
-
-    if not command
-      return @warn "Could not determine how to run nosetests."
-
-
-    child_process.exec command, cwd: cwd, =>
-
-      if not nosetestsfile.existsSync()
-        return @warn("Could not find '"+nosetestsfile.getPath()+"' after running the tests")
-
-      filecontent = fs.readFileSync(nosetestsfile.getPath(), 'UTF8');
-      data = JSON.parse(filecontent)
-
-      if data.metadata.time < start_time
-        return @warn('Error: timestamp of nosetests.json file is before starting time.')
-
-      @listview.load(data)
-      @panel.show()
-
-
-  warn: (message) ->
-    atom.notifications.addWarning message, dismissable: true
 
   hide: () ->
     @panel.hide()
-
-
-  getProjectRoot: () ->
-    # Returns a {Directory} object
-
-    current_editor_path = atom.workspace.getActiveTextEditor().getPath()
-
-    for dir in atom.project.getDirectories()
-       if dir.contains(current_editor_path)
-         return dir

@@ -1,19 +1,15 @@
 
 module.exports =
-class PythonNosetestsView
+class PythonNosetestsListView
   constructor: (callbackErrorPane) ->
 
     @callbackErrorPane = callbackErrorPane
-
-    # Create root element
-    @element = document.createElement('div')
-    @element.classList.add('python-nosetests')
 
     # Create message element
     @root_ul = document.createElement('ul')
     @root_ul.classList.add('list-tree')
     @root_ul.classList.add('has-collapsable-children')
-    @element.appendChild(@root_ul)
+    @root_ul.classList.add('listview')
 
 
   # Returns an object that can be retrieved when package is activated
@@ -21,13 +17,12 @@ class PythonNosetestsView
 
   # Tear down any state and detach
   destroy: ->
-    @element.remove()
+    @root_ul.remove()
 
   getElement: ->
-    @element
+    @root_ul
 
-  setBusy: ->
-    @element.classList.add('busy')
+
 
   clear: ->
     @root_ul.innerHTML = ""
@@ -42,7 +37,7 @@ class PythonNosetestsView
       for tc in mod.testcases
         @addTestCase(mod_ul, tc)
 
-    @element.classList.remove('busy')
+
 
   addModule: (mod) ->
     li = document.createElement('li')
