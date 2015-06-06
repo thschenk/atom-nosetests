@@ -1,6 +1,6 @@
 {
   "name": "python-nosetests",
-  "main": "./lib/python-nosetests",
+  "main": "./lib/main",
   "version": "0.0.0",
   "description": "Run python nosetests from within the atom editor",
   "keywords": [

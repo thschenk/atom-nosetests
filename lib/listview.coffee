@@ -52,7 +52,7 @@ class PythonNosetestsListView extends ScrollView
   #
   #
   clear: ->
-    @find('.root').innerHTML = ""
+    @find('.root').html('')
 
   load: (data) ->
     @clear()

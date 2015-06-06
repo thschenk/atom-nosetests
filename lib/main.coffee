@@ -1,8 +1,8 @@
 url = require 'url'
-PythonNosetestsListView = require './python-nosetests-listview'
-PythonNosetestsErrorView = require './python-nosetests-errorview'
 {CompositeDisposable} = require 'atom'
-Runner = require './python-nosetests-runner'
+PythonNosetestsListView = require './listview'
+PythonNosetestsErrorView = require './errorview'
+Runner = require './runner'
 
 module.exports = PythonNosetests =
   listview: null
@@ -66,5 +66,5 @@ module.exports = PythonNosetests =
 
 
   hide: () ->
-    if @listitem
-     atom.workspace.paneForItem(@listview).destroyItem(@listview)
+    atom.workspace.paneForItem(@listview).destroyItem(@listview)
+    @listview = null
