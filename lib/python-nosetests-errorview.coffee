@@ -63,6 +63,7 @@ class PythonNosetestsErrorView
     li.onclick = () =>
       li.classList.toggle('selected')
 
+
     @traceback_ul.appendChild(li)
 
 

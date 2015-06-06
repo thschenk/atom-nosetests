@@ -1,34 +1,62 @@
 
+{ScrollView} = require 'atom-space-pen-views'
+{Emitter, Disposable, CompositeDisposable} = require 'atom'
+
 module.exports =
-class PythonNosetestsListView
+class PythonNosetestsListView extends ScrollView
+  @content: ->
+    @div class: 'python-nosetests-listview', =>
+      @ul class: 'root list-tree has-collapsable-children'
+
+  initialize: ->
+    super
+    #@text('super long content that will scroll')
+
   constructor: (callbackErrorPane) ->
+    super
+
+    @emitter = new Emitter
 
     @callbackErrorPane = callbackErrorPane
 
-    # Create message element
-    @root_ul = document.createElement('ul')
-    @root_ul.classList.add('list-tree')
-    @root_ul.classList.add('has-collapsable-children')
-    @root_ul.classList.add('listview')
+  onDidChangeTitle: (callback) ->
+    @emitter.on 'did-change-title', callback
 
+  onDidChangeModified: (callback) ->
+    # No op to suppress deprecation warning
+    new Disposable
 
-  # Returns an object that can be retrieved when package is activated
-  serialize: ->
+  getTitle: ->
+    "Python Nosetests"
 
-  # Tear down any state and detach
-  destroy: ->
-    @root_ul.remove()
+  getURI: ->
+    'python-nosetests://listview/'
 
-  getElement: ->
-    @root_ul
+  getIconName: ->
+    null
 
-
-
+  getPath: ->
+    'python-nosetests://listview/'
+  #
+  #
+  # # Returns an object that can be retrieved when package is activated
+  # serialize: ->
+  #
+  # # Tear down any state and detach
+  # destroy: ->
+  #   @root_ul.remove()
+  #
+  # getElement: ->
+  #   @root_ul
+  #
+  #
+  #
   clear: ->
-    @root_ul.innerHTML = ""
+    @find('.root').innerHTML = ""
 
   load: (data) ->
     @clear()
+
 
 
     for mod in data.modules
@@ -79,7 +107,7 @@ class PythonNosetestsListView
     child_ul.classList.add('list-tree')
     li.appendChild(child_ul)
 
-    @root_ul.appendChild(li)
+    @find('.root').append(li)
 
 
 

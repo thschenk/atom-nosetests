@@ -4,40 +4,39 @@
 // for a full listing of what's available.
 @import "ui-variables";
 
-.python-nosetests {
-  background-color: @tool-panel-background-color;
-  height: 100%;
+.python-nosetests-listview {
+  //background-color: @tool-panel-background-color;
+  // height: 100%;
 
-  display: flex;
-  flex-direction: column;
-  flex-wrap: nowrap;
-  flex-flow: flex-start;
-  align-items: stretch;
-  align-content: stretch;
+
+
+  // display: flex;
+  // flex-direction: column;
+  // flex-wrap: nowrap;
+  // flex-flow: flex-start;
+  // align-items: stretch;
+  // align-content: stretch;
+  color: @text-color;
+
+  // border: 1px solid red;
+
+
+  .badge  {
+    margin-left: 0.6em;
+    font-weight: bold;
+  }
+
+  ul ul span {
+    padding-left: 1em;
+  }
+
+  // .busy {
+  //   opacity: .6;
+  // }
+
 }
 
-
-.python-nosetests .badge  {
-  margin-left: 0.6em;
-  font-weight: bold;
-}
-
-.python-nosetests ul ul span {
-  padding-left: 1em;
-}
-
-.python-nosetests.busy {
-  opacity: .6;
-}
-
-.python-nosetests .listview {
-  //border: 1px solid orange;
-  flex: 1 1;
-  overflow: auto;
-}
-
-
-.python-nosetests .errorview {
+.python-nosetests-errorview {
   //border: 1px solid red;
   flex: 1 1;
   list-style-type:none;

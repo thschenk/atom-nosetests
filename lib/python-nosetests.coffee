@@ -1,3 +1,4 @@
+url = require 'url'
 PythonNosetestsListView = require './python-nosetests-listview'
 PythonNosetestsErrorView = require './python-nosetests-errorview'
 {CompositeDisposable} = require 'atom'
@@ -5,7 +6,6 @@ Runner = require './python-nosetests-runner'
 
 module.exports = PythonNosetests =
   listview: null
-  panel: null
   subscriptions: null
 
   activate: () ->
@@ -18,50 +18,53 @@ module.exports = PythonNosetests =
     @subscriptions.add atom.commands.add 'atom-workspace', 'python-nosetests:hide': => @hide()
 
 
-    @listview = new PythonNosetestsListView(@setErrorPane)
-    @errorview = new PythonNosetestsErrorView()
+
+    atom.workspace.addOpener (uriToOpen) =>
+
+      try
+        {protocol, host, pathname} = url.parse(uriToOpen)
+      catch error
+        return
+
+      if protocol is 'python-nosetests:'
+        if host is 'listview'
+          return new PythonNosetestsListView(@setErrorPane)
 
 
-    @mainelement = document.createElement('div')
-    @mainelement.classList.add('python-nosetests')
-    @mainelement.appendChild(@listview.getElement())
-    @mainelement.appendChild(@errorview.getElement())
-    @errorview.hide()
-
-    @panel = atom.workspace.addRightPanel(item: @mainelement, visible: false)
 
   deactivate: () ->
-    @panel.destroy()
     @subscriptions.dispose()
     @listview.destroy()
 
   setErrorPane: (error) =>
-    PythonNosetests.errorview.load(error)
+    alert(error.message)
 
-  setBusy: (value)->
-    if value
-      @mainelement.classList.add('busy')
+
+  getListView: (callback) ->
+    if @listview
+      callback(@listview)
+
     else
-      @mainelement.classList.remove('busy')
+      location = 'python-nosetests://listview/'
+      options = {split: 'right', searchAllPanes: true}
+      atom.workspace.open(location, options).then (editor) =>
+        @listview = editor
+        callback(@listview)
+
 
   run: () ->
 
-    @setBusy(true)
-
     Runner.run {
-               success: (data) =>
-                 @listview.load(data)
-                 @panel.show()
-                 @setBusy(false)
-                 @errorview.hide()
+      success: (data) =>
+        @getListView (listview) -> listview.load(data)
 
-               error: (message) =>
-                 atom.notifications.addWarning message, dismissable: true
-                 @hide()
-                 @setBusy(false)
-                 @errorview.hide()
-               }
+
+      error: (message) =>
+       atom.notifications.addWarning message, dismissable: true
+
+     }
 
 
   hide: () ->
-    @panel.hide()
+    if @listitem
+     atom.workspace.paneForItem(@listview).destroyItem(@listview)
