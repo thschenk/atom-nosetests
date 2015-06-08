@@ -1,28 +1,20 @@
+{ScrollView} = require 'atom-space-pen-views'
 
 module.exports =
-class PythonNosetestsErrorView
-  constructor: () ->
+class PythonNosetestsErrorView extends ScrollView
 
-    # Create message element
-    @traceback_ul = document.createElement('ul')
-    @traceback_ul.classList.add('errorview')
-
+  @content: ->
+    @div class: 'errorview', =>
+      @ul class: 'root'
 
   # Returns an object that can be retrieved when package is activated
   serialize: ->
 
   # Tear down any state and detach
   destroy: ->
-    @traceback_ul.remove()
-
-  getElement: ->
-    @traceback_ul
-
-  hide: ->
-    @traceback_ul.classList.add('hide')
 
   clear: ->
-    @traceback_ul.innerHTML = ""
+    @find('.root').html('')
 
   load: (error) ->
     @clear()
@@ -33,7 +25,6 @@ class PythonNosetestsErrorView
 
     @addMessage(error.message)
 
-    @traceback_ul.classList.remove('hide')
 
   addTrace: (tb) ->
 
@@ -60,11 +51,16 @@ class PythonNosetestsErrorView
     li.appendChild(div_filename)
     li.appendChild(div_function)
     li.appendChild(code)
+
+    if not @isProjectFile(tb.filename)
+      li.classList.add('mute')
+
     li.onclick = () =>
-      li.classList.toggle('selected')
+      # li.classList.toggle('selected')
+      atom.workspace.open tb.filename, initialLine: tb.linenr-1, searchAllPanes: true, split: 'left'
 
 
-    @traceback_ul.appendChild(li)
+    @find('.root').append(li)
 
 
   addMessage: (message) ->
@@ -77,5 +73,11 @@ class PythonNosetestsErrorView
     li.classList.add('message')
     li.appendChild(code)
 
+    @find('.root').append(li)
 
-    @traceback_ul.appendChild(li)
+  isProjectFile: (filename) ->
+
+    for dir in atom.project.getDirectories()
+       if dir.contains(filename)
+         return true
+    return false

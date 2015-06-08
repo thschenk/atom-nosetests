@@ -5,19 +5,20 @@
 module.exports =
 class PythonNosetestsListView extends ScrollView
   @content: ->
-    @div class: 'python-nosetests-listview', =>
+    @div class: 'listview', =>
       @ul class: 'root list-tree has-collapsable-children'
 
-  initialize: ->
+  initialize: (a) ->
     super
-    #@text('super long content that will scroll')
 
-  constructor: (callbackErrorPane) ->
+  constructor: () ->
     super
 
     @emitter = new Emitter
 
-    @callbackErrorPane = callbackErrorPane
+  setOnClickError: (func) ->
+    @onclickerror = func
+
 
   onDidChangeTitle: (callback) ->
     @emitter.on 'did-change-title', callback
@@ -140,7 +141,7 @@ class PythonNosetestsListView extends ScrollView
 
     li.onclick = () =>
       if 'error' of test
-        @callbackErrorPane(test.error)
+        @onclickerror(test.error)
 
 
     ul.appendChild(li)

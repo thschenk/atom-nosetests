@@ -1,11 +1,11 @@
 url = require 'url'
 {CompositeDisposable} = require 'atom'
-PythonNosetestsListView = require './listview'
-PythonNosetestsErrorView = require './errorview'
+PythonNosetestsView = require './view'
+
 Runner = require './runner'
 
 module.exports = PythonNosetests =
-  listview: null
+  view: null
   subscriptions: null
 
   activate: () ->
@@ -28,35 +28,33 @@ module.exports = PythonNosetests =
 
       if protocol is 'python-nosetests:'
         if host is 'listview'
-          return new PythonNosetestsListView(@setErrorPane)
+          return new PythonNosetestsView(@setErrorPane)
 
 
 
   deactivate: () ->
     @subscriptions.dispose()
-    @listview.destroy()
-
-  setErrorPane: (error) =>
-    alert(error.message)
+    @view.destroy()
 
 
-  getListView: (callback) ->
-    if @listview
-      callback(@listview)
+
+  getView: (callback) ->
+    if @view and atom.workspace.paneForItem(@view)
+      callback(@view)
 
     else
       location = 'python-nosetests://listview/'
       options = {split: 'right', searchAllPanes: true}
       atom.workspace.open(location, options).then (editor) =>
-        @listview = editor
-        callback(@listview)
+        @view = editor
+        callback(@view)
 
 
   run: () ->
 
     Runner.run {
       success: (data) =>
-        @getListView (listview) -> listview.load(data)
+        @getView (view) -> view.getListView().load(data)
 
 
       error: (message) =>
@@ -66,5 +64,5 @@ module.exports = PythonNosetests =
 
 
   hide: () ->
-    atom.workspace.paneForItem(@listview).destroyItem(@listview)
-    @listview = null
+    atom.workspace.paneForItem(@view).destroyItem(@view)
+    @view = null

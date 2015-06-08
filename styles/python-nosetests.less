@@ -4,84 +4,95 @@
 // for a full listing of what's available.
 @import "ui-variables";
 
-.python-nosetests-listview {
-  //background-color: @tool-panel-background-color;
-  // height: 100%;
-
-
-
-  // display: flex;
-  // flex-direction: column;
-  // flex-wrap: nowrap;
-  // flex-flow: flex-start;
-  // align-items: stretch;
-  // align-content: stretch;
-  color: @text-color;
-
+.python-nosetests {
   // border: 1px solid red;
 
 
-  .badge  {
-    margin-left: 0.6em;
-    font-weight: bold;
-  }
-
-  ul ul span {
-    padding-left: 1em;
-  }
-
-  // .busy {
-  //   opacity: .6;
-  // }
-
-}
-
-.python-nosetests-errorview {
-  //border: 1px solid red;
-  flex: 1 1;
-  list-style-type:none;
-  padding: 0;
-  margin: 0;
-  overflow: auto;
+  .listview {
+    //background-color: @tool-panel-background-color;
+    height: 50%;
+    overflow: auto;
+    //border: 1px solid blue;
 
 
-  li {
-    border-top: 1px solid @text-color-subtle;
-    padding: 0.5em;
-  }
-
-  li.selected {
-    background-color:@inset-panel-background-color;
-  }
-
-  .filename {
-    color: @text-color-subtle;
-  }
-
-  .function {
-    color: @text-color-subtle;
-
-    span {
-      font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
-      color: @text-color;
-    }
-  }
-
-  .code {
-    font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
-    margin-left: 1em;
+    // display: flex;
+    // flex-direction: column;
+    // flex-wrap: nowrap;
+    // flex-flow: flex-start;
+    // align-items: stretch;
+    // align-content: stretch;
     color: @text-color;
-    background: inherit;
-    white-space: pre;
+
+
+    .badge  {
+      margin-left: 0.6em;
+      font-weight: bold;
+    }
+
+    ul ul span {
+      padding-left: 1em;
+    }
+
+    // .busy {
+    //   opacity: .6;
+    // }
+
   }
 
-  .message {
-    white-space: pre;
+  .errorview {
+  //  border: 1px solid white;
+    // flex: 1 1;
+    height: 50%;
+    overflow: auto;
+
+    ul {
+      list-style-type:none;
+      padding: 0;
+      margin: 0;
+    }
+
+    li {
+      border-top: 1px solid @text-color-subtle;
+      padding: 0.5em;
+    }
+
+    // li.selected {
+    //   background-color:@inset-panel-background-color;
+    // }
+    
+    li.mute {
+      opacity: 0.4;
+    }
+
+
+    .filename {
+      color: @text-color-subtle;
+    }
+
+    .function {
+      color: @text-color-subtle;
+
+      span {
+        font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
+        color: @text-color;
+      }
+    }
+
+    .code {
+      font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
+      margin-left: 1em;
+      color: @text-color;
+      background: inherit;
+      white-space: pre;
+    }
+
+    .message {
+      white-space: pre;
+    }
+
   }
 
-}
-
-
-.python-nosetests .errorview.hide {
-  display:none;
+  .errorview.hide {
+    display:none;
+  }
 }
