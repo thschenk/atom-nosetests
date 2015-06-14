@@ -7,7 +7,12 @@ module.exports = PythonNosetestsRunner =
 
     start_time = new Date().getTime()/1000;
 
-    root = @getProjectRoot()
+    try
+      root = @getProjectRoot()
+    catch
+      settings.error "Could not determine the active project root."
+      return
+
     nosetestsfile = root.getFile('nosetests.json')
 
     command = null
@@ -27,14 +32,14 @@ module.exports = PythonNosetestsRunner =
         cwd = root.getPath()
 
     if not command
-      settings.error "Could not determine how to run nosetests."
+      settings.error "Could not find 'nosetests.json' or 'test' script in the project root folder."
       return
 
 
     child_process.exec command, cwd: cwd, =>
 
       if not nosetestsfile.existsSync()
-        settings.error "Could not find '"+nosetestsfile.getPath()+"' after running the tests"
+        settings.error "Could not find '"+nosetestsfile.getPath()+"' after running the tests."
         return
 
       filecontent = fs.readFileSync(nosetestsfile.getPath(), 'UTF8');
@@ -48,7 +53,6 @@ module.exports = PythonNosetestsRunner =
 
   getProjectRoot: () ->
     # Returns a {Directory} object for the project folder that contains the file of the active editor
-
     current_editor_path = atom.workspace.getActiveTextEditor().getPath()
 
     for dir in atom.project.getDirectories()
