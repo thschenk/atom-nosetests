@@ -9,7 +9,7 @@
   "repository": "https://github.com/thschenk/atom-nosetests",
   "license": "MIT",
   "engines": {
-    "atom": ">=2.0.0"
+    "atom": ">=0.200.0 <2.0.0"
   },
   "dependencies": {
     "atom-space-pen-views": "^2.0.0"
