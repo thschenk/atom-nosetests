@@ -1,7 +1,7 @@
 {
   "name": "python-nosetests",
   "main": "./lib/main",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Run python nosetests from within the atom editor",
   "activationCommands": {
     "atom-workspace": "python-nosetests:run"
