@@ -84,23 +84,17 @@ class PythonNosetestsListView extends ScrollView
     div.appendChild(span_title)
 
     if mod.nr_success>0
-      span_success = document.createElement('span')
-      span_success.textContent = mod.nr_success
-      span_success.classList.add('badge', 'badge-small', 'text-success')
+      span_success = @createBadge(mod.nr_success, 'success')
       div.appendChild(span_success)
 
 
     if mod.nr_failed>0
-      span_failed = document.createElement('span')
-      span_failed.classList.add('badge', 'badge-small', 'text-warning')
-      span_failed.textContent = mod.nr_failed
+      span_failed = @createBadge(mod.nr_failed, 'warning')
       div.appendChild(span_failed)
 
     if mod.nr_error>0
-      span_failed = document.createElement('span')
-      span_failed.classList.add('badge', 'badge-small', 'text-error')
-      span_failed.textContent = mod.nr_error
-      div.appendChild(span_failed)
+      span_error =  @createBadge(mod.nr_error, 'error')
+      div.appendChild(span_error)
 
     li.appendChild(div)
 
@@ -145,3 +139,18 @@ class PythonNosetestsListView extends ScrollView
 
 
     ul.appendChild(li)
+
+
+  createBadge: (text, cls) ->
+
+    span = document.createElement('span')
+    span.textContent = text
+
+    if atom.config.get('python-nosetests.colorfullBadges')
+      span.classList.add('badge', 'badge-small', 'badge-'+cls)
+    else
+      span.classList.add('badge', 'badge-small', 'text-'+cls)
+
+
+
+    return span

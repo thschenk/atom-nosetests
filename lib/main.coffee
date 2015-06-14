@@ -37,7 +37,6 @@ module.exports = PythonNosetests =
     @view.destroy()
 
 
-
   getView: (callback) ->
     if @view and atom.workspace.paneForItem(@view)
       callback(@view)
@@ -66,3 +65,10 @@ module.exports = PythonNosetests =
   hide: () ->
     atom.workspace.paneForItem(@view).destroyItem(@view)
     @view = null
+
+  config:
+    colorfullBadges:
+      title: 'Colorfull Badges'
+      description: 'If enabled, the background color of the badges indicating the number of succeeded, failed and error test cases will be colorfull.'
+      type: 'boolean'
+      default: false
