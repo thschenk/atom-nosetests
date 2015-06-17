@@ -1,11 +1,10 @@
-
-{ScrollView} = require 'atom-space-pen-views'
+{View} = require 'space-pen'
 {Emitter, Disposable, CompositeDisposable} = require 'atom'
 PythonNosetestsListView = require './listview'
 PythonNosetestsErrorView = require './errorview'
 
 module.exports =
-class PythonNosetestsView extends ScrollView
+class PythonNosetestsView extends View
 
 
 
@@ -21,9 +20,6 @@ class PythonNosetestsView extends ScrollView
 
 
   initialize: ->
-    super
-    #@text('super long content that will scroll')
-
     @listview.setOnClickError (error) =>
       @errorview.load(error)
 

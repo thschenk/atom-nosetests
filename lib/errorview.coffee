@@ -1,7 +1,7 @@
-{ScrollView} = require 'atom-space-pen-views'
+{View} = require 'space-pen'
 
 module.exports =
-class PythonNosetestsErrorView extends ScrollView
+class PythonNosetestsErrorView extends View
 
   @content: ->
     @div class: 'errorview', =>

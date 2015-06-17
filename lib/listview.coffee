@@ -1,18 +1,12 @@
 
-{ScrollView} = require 'atom-space-pen-views'
+{View} = require 'space-pen'
 {Emitter, Disposable, CompositeDisposable} = require 'atom'
 
 module.exports =
-class PythonNosetestsListView extends ScrollView
+class PythonNosetestsListView extends View
   @content: ->
     @div class: 'listview', =>
       @ul class: 'root list-tree has-collapsable-children'
-
-  initialize: (a) ->
-    super
-
-  constructor: () ->
-    super
 
     @emitter = new Emitter
 

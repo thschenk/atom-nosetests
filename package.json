@@ -12,7 +12,7 @@
     "atom": ">=0.200.0 <2.0.0"
   },
   "dependencies": {
-    "atom-space-pen-views": "^2.0.0"
+    "space-pen": "^5.0.1"
   },
   "readmeFilename": "README.md",
   "keywords": [
