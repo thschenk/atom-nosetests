@@ -6,6 +6,7 @@ Runner = require './runner'
 
 module.exports = PythonNosetests =
   view: null
+  panel: null
   subscriptions: null
 
   activate: () ->
@@ -17,54 +18,32 @@ module.exports = PythonNosetests =
     @subscriptions.add atom.commands.add 'atom-workspace', 'python-nosetests:run': => @run()
     @subscriptions.add atom.commands.add 'atom-workspace', 'python-nosetests:hide': => @hide()
 
-
-
-    atom.workspace.addOpener (uriToOpen) =>
-
-      try
-        {protocol, host, pathname} = url.parse(uriToOpen)
-      catch error
-        return
-
-      if protocol is 'python-nosetests:'
-        if host is 'listview'
-          return new PythonNosetestsView(@setErrorPane)
-
-
-
   deactivate: () ->
     @subscriptions.dispose()
     @view.destroy()
-
-
-  getView: (callback) ->
-    if @view and atom.workspace.paneForItem(@view)
-      callback(@view)
-
-    else
-      location = 'python-nosetests://listview/'
-      options = {split: 'right', searchAllPanes: true}
-      atom.workspace.open(location, options).then (editor) =>
-        @view = editor
-        callback(@view)
-
+    @panel.destroy()
 
   run: () ->
-
     Runner.run {
       success: (data) =>
-        @getView (view) -> view.getListView().load(data)
+        if not @view
+          @view = new PythonNosetestsView()
+
+        if not @panel
+          @panel = atom.workspace.addRightPanel item: @view, visible: false
+
+        @panel.show()
+        @view.load(data)
+
 
 
       error: (message) =>
        atom.notifications.addWarning message, dismissable: true
-
      }
 
 
   hide: () ->
-    atom.workspace.paneForItem(@view).destroyItem(@view)
-    @view = null
+    @panel.hide()
 
   config:
     colorfullBadges:

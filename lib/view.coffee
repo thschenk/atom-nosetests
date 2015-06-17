@@ -1,57 +1,45 @@
 {View} = require 'space-pen'
-{Emitter, Disposable, CompositeDisposable} = require 'atom'
-PythonNosetestsListView = require './listview'
-PythonNosetestsErrorView = require './errorview'
+
+ResizablePanel = require './resizablepanel'
+SplitView = require './splitview'
+ListView = require './listview'
+ErrorView = require './errorview'
 
 module.exports =
 class PythonNosetestsView extends View
 
-
-
   @content: ->
     @div class: 'python-nosetests', =>
-      @subview 'listview', new PythonNosetestsListView()
-      @subview 'errorview', new PythonNosetestsErrorView()
-
-
-  # onClickError: (error) =>
-  #   alert(error.message)
-  #   @errorview.load(error)
-
+      @div class: 'resizable-panel-handle'
+      @div class: 'mainview', =>
+        @subview 'headerview', new HeaderView()
+        @subview 'listview', new ListView()
+        @div class: 'bar'
+        @subview 'errorview', new ErrorView()
 
   initialize: ->
+
+    new ResizablePanel(@find('.resizable-panel-handle'))
+    @splitview = new SplitView(@find('.bar'))
+
+
     @listview.setOnClickError (error) =>
       @errorview.load(error)
+      @splitview.setRatio()
 
-
-  constructor: (callbackErrorPane) ->
+  constructor:  ->
     super
 
-    @emitter = new Emitter
+  load: (data) ->
+    @listview.load(data)
+    @errorview.clear()
+    @splitview.full_a()
 
-    @callbackErrorPane = callbackErrorPane
+    #@fixLastHeight()
 
-  onDidChangeTitle: (callback) ->
-    @emitter.on 'did-change-title', callback
 
-  onDidChangeModified: (callback) ->
-    # No op to suppress deprecation warning
-    new Disposable
 
-  getTitle: ->
-    "Python Nosetests"
-
-  getURI: ->
-    'python-nosetests://listview/'
-
-  getIconName: ->
-    null
-
-  getPath: ->
-    'python-nosetests://listview/'
-
-  getListView: ->
-    return @listview
-
-  getErrorView: ->
-    return @errorview
+class HeaderView extends View
+  @content: ->
+    @div class: 'header', =>
+      @text 'Python Nosetests'

@@ -5,45 +5,64 @@
 @import "ui-variables";
 
 .python-nosetests {
-  // border: 1px solid red;
 
+  width: 40em;
+  height: 100%;
   font-size: 90%;
 
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: stretch;
+  align-content: stretch;
+
+  .resizable-panel-handle {
+    flex: 0 0 10px;
+    cursor: col-resize;
+  }
+
+  .mainview {
+    flex: 1 1 auto;
+    height: 100%;
+    flex-direction: column;
+
+    display: flex;
+
+    .header {
+      color: @text-color-subtle;
+      flex: 0 0 auto;
+    }
+
+    .bar {
+      background-color: @background-color-highlight;
+      flex: 0 0 7px;
+      cursor: row-resize;
+    }
+
+  }
+
+
   .listview {
-    //background-color: @tool-panel-background-color;
-    height: 50%;
+    flex: 0.5;
     overflow: auto;
-    //border: 1px solid blue;
-
-
-    // display: flex;
-    // flex-direction: column;
-    // flex-wrap: nowrap;
-    // flex-flow: flex-start;
-    // align-items: stretch;
-    // align-content: stretch;
     color: @text-color;
-
 
     .badge  {
       margin-left: 0.6em;
       font-weight: bold;
     }
 
+    .selected {
+      background-color: @background-color-highlight;
+    }
+
     ul ul span {
       padding-left: 1em;
     }
-
-    // .busy {
-    //   opacity: .6;
-    // }
-
   }
 
   .errorview {
-  //  border: 1px solid white;
-    // flex: 1 1;
-    height: 50%;
+    flex: 0.5;
     overflow: auto;
 
     ul {
@@ -64,7 +83,6 @@
     li.mute {
       opacity: 0.4;
     }
-
 
     .filename {
       color: @text-color-subtle;
@@ -90,10 +108,5 @@
     .message {
       white-space: pre;
     }
-
-  }
-
-  .errorview.hide {
-    display:none;
   }
 }

@@ -1,58 +1,21 @@
 
 {View} = require 'space-pen'
-{Emitter, Disposable, CompositeDisposable} = require 'atom'
+{Disposable, CompositeDisposable} = require 'atom'
 
 module.exports =
-class PythonNosetestsListView extends View
+class ListView extends View
   @content: ->
     @div class: 'listview', =>
       @ul class: 'root list-tree has-collapsable-children'
 
-    @emitter = new Emitter
-
   setOnClickError: (func) ->
     @onclickerror = func
 
-
-  onDidChangeTitle: (callback) ->
-    @emitter.on 'did-change-title', callback
-
-  onDidChangeModified: (callback) ->
-    # No op to suppress deprecation warning
-    new Disposable
-
-  getTitle: ->
-    "Python Nosetests"
-
-  getURI: ->
-    'python-nosetests://listview/'
-
-  getIconName: ->
-    null
-
-  getPath: ->
-    'python-nosetests://listview/'
-  #
-  #
-  # # Returns an object that can be retrieved when package is activated
-  # serialize: ->
-  #
-  # # Tear down any state and detach
-  # destroy: ->
-  #   @root_ul.remove()
-  #
-  # getElement: ->
-  #   @root_ul
-  #
-  #
-  #
   clear: ->
     @find('.root').html('')
 
   load: (data) ->
     @clear()
-
-
 
     for mod in data.modules
       mod_ul = @addModule(mod)

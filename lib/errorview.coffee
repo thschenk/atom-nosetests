@@ -1,7 +1,7 @@
 {View} = require 'space-pen'
 
 module.exports =
-class PythonNosetestsErrorView extends View
+class ErrorView extends View
 
   @content: ->
     @div class: 'errorview', =>
