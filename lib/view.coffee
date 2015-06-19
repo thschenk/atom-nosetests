@@ -33,13 +33,17 @@ class PythonNosetestsView extends View
   constructor:  ->
     super
 
+  mute: ->
+    @find('.mainview').addClass('muted')
+
+  unmute: ->
+    @find('.mainview').removeClass('muted')
+
   load: (data) ->
     @listview.load(data)
     @errorview.clear()
     @splitview.full_a()
-
-    #@fixLastHeight()
-
+    @unmute()
 
 
 class HeaderView extends View

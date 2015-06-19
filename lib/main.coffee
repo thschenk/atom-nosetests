@@ -24,6 +24,10 @@ module.exports = PythonNosetests =
     @panel.destroy()
 
   run: () ->
+
+    if @view
+      @view.mute()
+
     Runner.run {
       success: (data) =>
         if not @view
