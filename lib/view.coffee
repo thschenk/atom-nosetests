@@ -23,9 +23,12 @@ class PythonNosetestsView extends View
     @splitview = new SplitView(@find('.bar'))
 
 
-    @listview.setOnClickError (error) =>
-      @errorview.load(error)
-      @splitview.setRatio()
+    @listview.setOnSelect (test) =>
+      if 'error' of test
+        @errorview.load(test.error)
+        @splitview.setRatio()
+      else
+        @splitview.full_a()
 
   constructor:  ->
     super

@@ -17,11 +17,7 @@ class SplitView
 
   childResizeStarted: (event) =>
 
-    console.log 'Start pageY:', event.pageY
-    # @start_pageY = event.pageY
-
     @start_pageY = @bar.offset().top + @bar.outerHeight() - event.pageY
-
 
     $(document).on('mousemove', @childResize)
     $(document).on('mouseup', @childResizeStopped)

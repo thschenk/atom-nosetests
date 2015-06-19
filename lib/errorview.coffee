@@ -1,11 +1,11 @@
-{View} = require 'space-pen'
+{View, $$} = require 'space-pen'
 
 module.exports =
 class ErrorView extends View
 
   @content: ->
     @div class: 'errorview', =>
-      @ul class: 'root'
+      @ul class: 'root', outlet:'root'
 
   # Returns an object that can be retrieved when package is activated
   serialize: ->
@@ -14,66 +14,45 @@ class ErrorView extends View
   destroy: ->
 
   clear: ->
-    @find('.root').html('')
+    @root.html('')
 
   load: (error) ->
     @clear()
 
 
-    for tb in error.traceback
-      @addTrace(tb)
-
     @addMessage(error.message)
 
+    for tb in error.traceback by -1
+      @addTrace(tb)
 
   addTrace: (tb) ->
 
-    div_filename = document.createElement('div')
-    div_filename.textContent = tb.filename+':'+tb.linenr
-    div_filename.classList.add('filename')
+    li = $$ ->
+      @li =>
+        @div class: 'filename', tb.filename+':'+tb.linenr
+        @div class: 'function', =>
+          @text "In function "
+          @span tb.function
+          @text ":"
+        @div class: 'code', tb.line
 
 
-    span_functionname = document.createElement('span')
-    span_functionname.textContent = tb.function
-
-    div_function = document.createElement('div')
-    div_function.classList.add('function')
-    div_function.appendChild(document.createTextNode("In function "))
-    div_function.appendChild(span_functionname)
-    div_function.appendChild(document.createTextNode(":"))
-
-    code = document.createElement('div')
-    code.classList.add('code')
-    code.textContent = tb.line
-
-
-    li = document.createElement('li')
-    li.appendChild(div_filename)
-    li.appendChild(div_function)
-    li.appendChild(code)
 
     if not @isProjectFile(tb.filename)
-      li.classList.add('mute')
+      li.addClass('mute')
 
-    li.onclick = () =>
-      # li.classList.toggle('selected')
-      atom.workspace.open tb.filename, initialLine: tb.linenr-1, searchAllPanes: true, split: 'left'
+    li.on 'click', =>
+      atom.workspace.open tb.filename, initialLine: tb.linenr-1, searchAllPanes: true
 
-
-    @find('.root').append(li)
-
+    @root.append(li)
 
   addMessage: (message) ->
 
-    code = document.createElement('div')
-    code.classList.add('code')
-    code.textContent = message
+    li = $$ ->
+      @li class: 'message', =>
+        @div class: 'code', message
 
-    li = document.createElement('li')
-    li.classList.add('message')
-    li.appendChild(code)
-
-    @find('.root').append(li)
+    @root.append(li)
 
   isProjectFile: (filename) ->
 

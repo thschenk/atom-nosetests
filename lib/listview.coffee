@@ -1,18 +1,18 @@
 
-{View} = require 'space-pen'
+{View, $$} = require 'space-pen'
 {Disposable, CompositeDisposable} = require 'atom'
 
 module.exports =
 class ListView extends View
   @content: ->
     @div class: 'listview', =>
-      @ul class: 'root list-tree has-collapsable-children'
+      @ul class: 'root list-tree has-collapsable-children', outlet: 'root'
 
-  setOnClickError: (func) ->
-    @onclickerror = func
+  setOnSelect: (func) ->
+    @onselect = func
 
   clear: ->
-    @find('.root').html('')
+    @root.html('')
 
   load: (data) ->
     @clear()
@@ -23,79 +23,60 @@ class ListView extends View
       for tc in mod.testcases
         @addTestCase(mod_ul, tc)
 
-
-
   addModule: (mod) ->
-    li = document.createElement('li')
-    li.classList.add('list-nested-item')
 
-    div = document.createElement('div')
-    div.classList.add('list-item')
+    li = $$ ->
+      @li class:'list-nested-item', =>
+        @div class: 'list-item', =>
+          @span mod.name
+        @ul class:'list-tree'
 
-    div.onclick = () ->
-      li.classList.toggle('collapsed')
-
-    span_title = document.createElement('span')
-    span_title.textContent = mod.name
-    #span_title.classList.add('text-subtle')
-    div.appendChild(span_title)
+    div = li.find('div')
+    div.on 'click', =>
+      li.toggleClass('collapsed')
 
     if mod.nr_success>0
-      span_success = @createBadge(mod.nr_success, 'success')
-      div.appendChild(span_success)
-
+      div.append(@createBadge(mod.nr_success, 'success'))
 
     if mod.nr_failed>0
-      span_failed = @createBadge(mod.nr_failed, 'warning')
-      div.appendChild(span_failed)
+      div.append(@createBadge(mod.nr_failed, 'warning'))
 
     if mod.nr_error>0
-      span_error =  @createBadge(mod.nr_error, 'error')
-      div.appendChild(span_error)
-
-    li.appendChild(div)
-
-    child_ul = document.createElement('ul')
-    child_ul.classList.add('list-tree')
-    li.appendChild(child_ul)
-
-    @find('.root').append(li)
-
-
+      div.append(@createBadge(mod.nr_error, 'error'))
 
     if mod.nr_error + mod.nr_failed == 0
-      li.classList.add('collapsed')
+      li.addClass('collapsed')
+
+    @root.append(li)
 
     # return the child ul
-    child_ul
+    return li.find('ul')
 
 
 
   addTestCase: (ul, test) ->
-    li = document.createElement('li')
-    li.classList.add('list-nested-item')
-
-    title = document.createElement('span')
-    title.textContent = test.name
-    li.appendChild(title)
-
 
     switch test.result
       when "success"
-        title.classList.add('text-success')
+        title_class = 'text-success'
       when "failed"
-        title.classList.add('text-warning')
+        title_class = 'text-warning'
       when "error"
-        title.classList.add('text-error')
+        title_class = 'text-error'
       else
-        title.classList.add('text-info')
+        title_class = 'text-info'
 
-    li.onclick = () =>
-      if 'error' of test
-        @onclickerror(test.error)
+    li = $$ ->
+      @li class:'list-nested-item', =>
+        @span class: title_class, test.name
 
+    li.on 'click', =>
+      @root.find('li').removeClass('active')
+      li.addClass('active')
+      @onselect(test)
 
-    ul.appendChild(li)
+    # add the testcase to the module
+    ul.append(li)
 
 
   createBadge: (text, cls) ->
