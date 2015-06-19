@@ -1,11 +1,8 @@
 # Python Nosetests
 
-Run python nosetests from within the [Atom](https://atom.io/) editor.
+Run python [nosetests](https://nose.readthedocs.org/en/latest/) from within the [Atom](https://atom.io/) editor.
 
 ![Screenshot](https://github.com/thschenk/atom-nosetests/raw/master/screenshot.png)
-
-**Note:** This package is in early stage of development.
-Although the basics are working, the usability needs to be improved further.
 
 
 ## Installation
@@ -39,8 +36,6 @@ can be used to generate some succeeding, failing and erroneous test cases.
 
 
 ## Roadmap
-
- * Resizable separation between test cases and traceback.
  * Hide traceback items from python unittest module.
+ * Provide a way to run nosetests if no `nosetests.json` is found
  * Create specs.
- * Visual feedback when test results are updated.
