@@ -4,6 +4,8 @@ path = require 'path'
 
 module.exports = PythonNosetestsRunner =
 
+  last_nosetestsfile: null
+
   run: (settings) ->
     # Finds out which tests to run and run them asynchronously
     # callbacks:
@@ -12,13 +14,23 @@ module.exports = PythonNosetestsRunner =
 
     start_time = new Date().getTime()/1000;
 
-    nosetestsfile = @findNoseTestsJson(@getCurrentDir())
+    current_dir = @getCurrentDir()
+
+    if current_dir
+      nosetestsfile = @findNoseTestsJson(current_dir)
+
+    # if no nosetests file is found, use the file found in a previous run.
+    if not nosetestsfile
+      if @last_nosetestsfile
+        if fs.existsSync(@last_nosetestsfile)
+          nosetestsfile = @last_nosetestsfile
 
     if nosetestsfile
       filecontent = fs.readFileSync(nosetestsfile, 'UTF8');
       data = JSON.parse(filecontent)
       command = data.metadata.command
       cwd = data.metadata.cwd
+      @last_nosetestsfile = nosetestsfile
 
     else
       settings.error "Could not find 'nosetests.json' in any of the parent folders of the active file."
@@ -62,9 +74,12 @@ module.exports = PythonNosetestsRunner =
 
   getCurrentDir: ->
     # Returns the directory of the file in the currently active editor
+    active_editor = atom.workspace.getActiveTextEditor()
 
-    current_file = atom.workspace.getActiveTextEditor().getPath()
-    return path.dirname(current_file)
+    if active_editor
+      return path.dirname(active_editor.getPath())
+    else
+      return null
 
 
 

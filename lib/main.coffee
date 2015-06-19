@@ -43,6 +43,9 @@ module.exports = PythonNosetests =
 
       error: (message) =>
        atom.notifications.addWarning message, dismissable: true
+
+       if @view
+         @view.unmute()
      }
 
 
