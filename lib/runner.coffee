@@ -1,48 +1,37 @@
 child_process = require 'child_process'
 fs = require 'fs'
+path = require 'path'
 
 module.exports = PythonNosetestsRunner =
 
   run: (settings) ->
+    # Finds out which tests to run and run them asynchronously
+    # callbacks:
+    #   - settings.success( <content of nosetests.json> )
+    #   - settings.error( <errormessage> )
 
     start_time = new Date().getTime()/1000;
 
-    try
-      root = @getProjectRoot()
-    catch
-      settings.error "Could not determine the active project root."
-      return
+    nosetestsfile = @findNoseTestsJson(@getCurrentDir())
 
-    nosetestsfile = root.getFile('nosetests.json')
+    if nosetestsfile
+      filecontent = fs.readFileSync(nosetestsfile, 'UTF8');
+      data = JSON.parse(filecontent)
+      command = data.metadata.command
+      cwd = data.metadata.cwd
 
-    command = null
-    cwd = null
-
-    if not command
-      if nosetestsfile.existsSync()
-        filecontent = fs.readFileSync(nosetestsfile.getPath(), 'UTF8');
-        data = JSON.parse(filecontent)
-        command = data.metadata.command
-        cwd = data.metadata.cwd
-
-    if not command
-      script = root.getFile('test')
-      if script.existsSync()
-        command = script.getPath()
-        cwd = root.getPath()
-
-    if not command
-      settings.error "Could not find 'nosetests.json' or 'test' script in the project root folder."
+    else
+      settings.error "Could not find 'nosetests.json' in any of the parent folders of the active file."
       return
 
 
     child_process.exec command, cwd: cwd, =>
 
-      if not nosetestsfile.existsSync()
-        settings.error "Could not find '"+nosetestsfile.getPath()+"' after running the tests."
+      if not fs.existsSync(nosetestsfile)
+        settings.error "Could not find '"+nosetestsfile+"' after running the tests."
         return
 
-      filecontent = fs.readFileSync(nosetestsfile.getPath(), 'UTF8');
+      filecontent = fs.readFileSync(nosetestsfile, 'UTF8');
       data = JSON.parse(filecontent)
 
       if data.metadata.time < start_time
@@ -51,10 +40,40 @@ module.exports = PythonNosetestsRunner =
 
       settings.success data
 
-  getProjectRoot: () ->
-    # Returns a {Directory} object for the project folder that contains the file of the active editor
-    current_editor_path = atom.workspace.getActiveTextEditor().getPath()
+  findNoseTestsJson: (dir) ->
+    # Searches for a 'nosetests.json' file in the given directory or in it's parent directories
+    # It stops searching if none of the active projects contain this directory.
+    # Returns null if no nosetests.json file can be found.
 
-    for dir in atom.project.getDirectories()
-       if dir.contains(current_editor_path)
-         return dir
+    nosetestsfile = path.join(dir,'nosetests.json')
+
+    # check whether this file would be in one of the active projects
+    if not @pathInAnyProject(nosetestsfile)
+      return null
+
+    # return the filename if the file exists
+    if fs.existsSync(nosetestsfile)
+      return nosetestsfile
+
+    else
+      # call this function recursively on the parent directory
+      return @findNoseTestsJson(path.dirname(dir))
+
+
+  getCurrentDir: ->
+    # Returns the directory of the file in the currently active editor
+
+    current_file = atom.workspace.getActiveTextEditor().getPath()
+    return path.dirname(current_file)
+
+
+
+  pathInAnyProject: (directory) ->
+    # Returns true if any of the active project directories contain the given directory.
+    # Otherwise it returns false.
+
+    for project_dir in atom.project.getDirectories()
+       if project_dir.contains(directory)
+         return true
+
+    return false
