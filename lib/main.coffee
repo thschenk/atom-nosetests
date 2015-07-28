@@ -58,3 +58,8 @@ module.exports = PythonNosetests =
       description: 'If enabled, the background color of the badges indicating the number of succeeded, failed and error test cases will be colorfull.'
       type: 'boolean'
       default: false
+    env:
+      title: 'Environment variables'
+      description: 'Additional environment variables passed with nosetests (valid json string required), for example: {"DJANGO_SETTINGS_MODULE": "project.settings"}'
+      type: 'string'
+      default: '{}'
