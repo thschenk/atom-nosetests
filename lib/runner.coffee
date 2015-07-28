@@ -36,8 +36,9 @@ module.exports = PythonNosetestsRunner =
       settings.error "Could not find 'nosetests.json' in any of the parent folders of the active file."
       return
 
-
-    child_process.exec command, cwd: cwd, =>
+    env_string = atom.config.get("python-nosetests.env")
+    env = JSON.parse(env_string)
+    child_process.exec command, {cwd: cwd, env: env}, =>
 
       if not fs.existsSync(nosetestsfile)
         settings.error "Could not find '"+nosetestsfile+"' after running the tests."
