@@ -34,6 +34,29 @@ The *Python Nosetests* package will now locate the `nosetests.json` file, run th
 When trying this package, this [python-testproject](https://github.com/thschenk/python-testproject)
 can be used to generate some succeeding, failing and erroneous test cases.
 
+## Django nose tests
+
+You can run django nose tests also with this plugin. Install `django_nose`:
+
+    sudo pip install django_nose
+
+Follow installation instructions at [django_nose](https://django-nose.readthedocs.org/en/latest/)
+
+Then put configuration to your `settings.py` file:
+
+    BASE_DIR = os.path.dirname(os.path.dirname(__file__)
+    NOSE_ARGS = ("--with-json-extended", "--config={}/nose.cfg".format(BASE_DIR))
+    TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
+
+By specifying `nose.cfg` you can specify exactly which tests you want to perform.
+
+Example nose.cfg:
+
+    [nosetests]
+    tests=app.tests.test_models
+
+After that enable custom command in package settings and leave the default or provide your own.
+
 
 ## Roadmap
  * Hide traceback items from python unittest module.
