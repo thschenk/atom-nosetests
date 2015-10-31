@@ -1,6 +1,7 @@
 
 {View, $$} = require 'space-pen'
 {Disposable, CompositeDisposable} = require 'atom'
+Utils = require './utils'
 
 module.exports =
 class ListView extends View
@@ -16,6 +17,11 @@ class ListView extends View
 
   load: (data) ->
     @clear()
+
+    if data.syntaxerrors and data.syntaxerrors.length
+      mod_ul = @addModule({name: 'Syntax Errors', nr_error: data.syntaxerrors.length})
+      for syntax in data.syntaxerrors
+        @addSyntaxError(mod_ul, syntax)
 
     for mod in data.modules
       mod_ul = @addModule(mod)
@@ -54,6 +60,24 @@ class ListView extends View
 
 
 
+  addSyntaxError: (ul, syntax) ->
+
+    li = $$ ->
+      @li class:'list-nested-item', =>
+        @span syntax.name
+
+    li.on 'click', =>
+      @root.find('li').removeClass('active')
+      li.addClass('active')
+
+      Utils.open_traceback(syntax.error.traceback[0])
+
+      @onselect(syntax)
+
+    # add the testcase to the module
+    ul.append(li)
+
+
   addTestCase: (ul, test) ->
 
     switch test.result
@@ -74,6 +98,7 @@ class ListView extends View
       @root.find('li').removeClass('active')
       li.addClass('active')
       @onselect(test)
+
 
     # add the testcase to the module
     ul.append(li)

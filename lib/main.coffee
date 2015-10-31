@@ -58,3 +58,9 @@ module.exports = PythonNosetests =
       description: 'If enabled, the background color of the badges indicating the number of succeeded, failed and error test cases will be colorfull.'
       type: 'boolean'
       default: false
+
+    hiddenTracebackFilter:
+      title: 'Hidden  Traceback entries'
+      description: 'Traceback entries of which the filename ends with one of the following strings are not shown in the traceback view. Multiple entries are separated by a space.'
+      type: 'string'
+      default: '/unittest/case.py'

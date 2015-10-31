@@ -1,4 +1,6 @@
 {View, $$} = require 'space-pen'
+Utils = require './utils'
+
 
 module.exports =
 class ErrorView extends View
@@ -22,10 +24,14 @@ class ErrorView extends View
 
     @addMessage(error.message)
 
-    for tb in error.traceback by -1
-      @addTrace(tb)
+    if error.traceback
+      for tb in error.traceback by -1
+        @addTrace(tb)
 
   addTrace: (tb) ->
+
+    if @matchTracebackFilter(tb.filename)
+      return
 
     li = $$ ->
       @li =>
@@ -36,13 +42,14 @@ class ErrorView extends View
           @text ":"
         @div class: 'code', tb.line
 
-
-
     if not @isProjectFile(tb.filename)
       li.addClass('mute')
 
+    if not tb.function
+      li.find('.function').hide()
+
     li.on 'click', =>
-      atom.workspace.open tb.filename, initialLine: tb.linenr-1, searchAllPanes: true
+      Utils.open_traceback(tb)
 
     @root.append(li)
 
@@ -59,4 +66,15 @@ class ErrorView extends View
     for dir in atom.project.getDirectories()
        if dir.contains(filename)
          return true
+    return false
+
+  matchTracebackFilter: (filename) ->
+
+    filterstring = atom.config.get('python-nosetests.hiddenTracebackFilter')
+
+    for filter in filterstring.split(' ')
+      if filter.length
+        if filename.endsWith(filter)
+          return true
+
     return false
