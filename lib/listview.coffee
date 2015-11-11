@@ -97,6 +97,8 @@ class ListView extends View
     li.on 'click', =>
       @root.find('li').removeClass('active')
       li.addClass('active')
+
+      Utils.open_traceback(test)
       @onselect(test)
 
 

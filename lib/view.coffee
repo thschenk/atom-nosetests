@@ -40,6 +40,13 @@ class PythonNosetestsView extends View
     @find('.mainview').removeClass('muted')
 
   load: (data) ->
+
+    if not data.syntaxerrors?
+      msg = 'Warning: not using latest nose plugin. Please install using:\npip install nosetests_json_extended --upgrade'
+      @headerview.setWarning(msg)
+    else
+      @headerview.clearWarning()
+
     @listview.load(data)
     @errorview.clear()
     @splitview.full_a()
@@ -49,4 +56,17 @@ class PythonNosetestsView extends View
 class HeaderView extends View
   @content: ->
     @div class: 'header', =>
-      @text 'Python Nosetests'
+      @div class: 'title', =>
+        @text 'Python Nosetests'
+      @div class: 'warning hidden', =>
+        @text ''
+
+  setWarning: (message) ->
+    warning = @find('.warning')
+    warning.removeClass('hidden')
+    warning.text(message)
+
+  clearWarning: (message) ->
+    warning = @find('.warning')
+    warning.addClass('hidden')
+    warning.text('')

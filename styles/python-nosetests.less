@@ -29,9 +29,23 @@
     display: flex;
 
     .header {
-      color: @text-color-subtle;
       flex: 0 0 auto;
+
+      .title {
+        color: @text-color-subtle;
+      }
+
+      .warning {
+        background-color: @background-color-warning;
+        white-space: pre;
+        padding: 2px 6px;
+      }
+      .hidden {
+        display: none;
+      }
+
     }
+
 
     .bar {
       background-color: @background-color-highlight;

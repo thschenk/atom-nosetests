@@ -71,7 +71,6 @@ module.exports = PythonNosetestsRunner =
       # call this function recursively on the parent directory
       return @findNoseTestsJson(path.dirname(dir))
 
-
   getCurrentDir: ->
     # Returns the directory of the file in the currently active editor
     active_editor = atom.workspace.getActiveTextEditor()
