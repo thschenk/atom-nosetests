@@ -12,7 +12,7 @@ module.exports = PythonNosetestsRunner =
     #   - settings.success( <content of nosetests.json> )
     #   - settings.error( <errormessage> )
 
-    start_time = new Date().getTime()/1000;
+    last_run = null
 
     current_dir = @getCurrentDir()
 
@@ -29,13 +29,13 @@ module.exports = PythonNosetestsRunner =
       filecontent = fs.readFileSync(nosetestsfile, 'UTF8');
       data = JSON.parse(filecontent)
       command = data.metadata.command
+      last_run = data.metadata.time
       cwd = data.metadata.cwd
       @last_nosetestsfile = nosetestsfile
 
     else
       settings.error "Could not find 'nosetests.json' in any of the parent folders of the active file."
       return
-
 
     child_process.exec command, cwd: cwd, =>
 
@@ -46,8 +46,8 @@ module.exports = PythonNosetestsRunner =
       filecontent = fs.readFileSync(nosetestsfile, 'UTF8');
       data = JSON.parse(filecontent)
 
-      if data.metadata.time < start_time
-        settings.error 'Error: timestamp of nosetests.json file is before starting time.'
+      if last_run and data.metadata.time == last_run
+        settings.error 'Error: timestamp of nosetests.json did not update'
         return
 
       settings.success data

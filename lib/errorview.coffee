@@ -2,6 +2,8 @@
 Utils = require './utils'
 
 
+LINE_MATCH = /\s*File\s"((?:[^"]|[\\"])+)", line ([0-9]+)/gi
+
 module.exports =
 class ErrorView extends View
 
@@ -54,10 +56,16 @@ class ErrorView extends View
     @root.append(li)
 
   addMessage: (message) ->
-
+    # we look for a message like parse error to extract file and linenumber
+    match = LINE_MATCH.exec(message)
     li = $$ ->
+      @div class: 'filename', match[1]+':'+match[2] if match
       @li class: 'message', =>
         @div class: 'code', message
+    if match
+      li.on 'click', =>
+        atom.workspace.open match[1], initialLine: match[2]-1, searchAllPanes: true
+
 
     @root.append(li)
 
