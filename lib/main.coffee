@@ -8,6 +8,7 @@ module.exports = PythonNosetests =
   view: null
   panel: null
   subscriptions: null
+  onSaveSubscriptions: null
 
   activate: () ->
 
@@ -18,12 +19,11 @@ module.exports = PythonNosetests =
     @subscriptions.add atom.commands.add 'atom-workspace', 'python-nosetests:run': => @run()
     @subscriptions.add atom.commands.add 'atom-workspace', 'python-nosetests:hide': => @hide()
 
-    @subscriptions.add atom.workspace.observeTextEditors (editor) =>
-      @subscriptions.add editor.onDidSave =>
-        @run()
+
 
   deactivate: () ->
     @subscriptions.dispose()
+    @onSaveSubscriptions.dispose()
     @view.destroy()
     @panel.destroy()
 
@@ -36,6 +36,12 @@ module.exports = PythonNosetests =
       success: (data) =>
         if not @view
           @view = new PythonNosetestsView()
+
+        if not @onSaveSubscriptions
+          @onSaveSubscriptions = new CompositeDisposable
+          @onSaveSubscriptions.add atom.workspace.observeTextEditors (editor) =>
+            @onSaveSubscriptions.add editor.onDidSave =>
+              @run()
 
         if not @panel
           @panel = atom.workspace.addRightPanel item: @view, visible: false
@@ -55,6 +61,8 @@ module.exports = PythonNosetests =
 
   hide: () ->
     @panel.hide()
+    @onSaveSubscriptions.dispose()
+    @onSaveSubscriptions = null
 
   config:
     colorfullBadges:
