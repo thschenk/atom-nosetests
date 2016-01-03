@@ -18,6 +18,10 @@ module.exports = PythonNosetests =
     @subscriptions.add atom.commands.add 'atom-workspace', 'python-nosetests:run': => @run()
     @subscriptions.add atom.commands.add 'atom-workspace', 'python-nosetests:hide': => @hide()
 
+    @subscriptions.add atom.workspace.observeTextEditors (editor) =>
+      @subscriptions.add editor.onDidSave =>
+        @run()
+
   deactivate: () ->
     @subscriptions.dispose()
     @view.destroy()
